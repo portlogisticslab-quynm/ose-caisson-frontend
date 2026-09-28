@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CScheck Web v4</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="title">CScheck Web v4 <span>| Buoyancy + Stability + Shared Sync</span></div>
+    <div class="actions">
+      <button id="btnBuoy">Run Buoyancy</button>
+      <button id="btnStab">Run Stability</button>
+      <button id="btnAll" class="primary">Run All</button>
+      <button id="btnReset">Reset</button>
+      <button id="btnExport">Export Excel</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- ============ LEFT: INPUTS ============ -->
+    <section class="panel inputs">
+      <h2>Inputs</h2>
+      <nav class="tabs" id="tabs"></nav>
+      <div id="tabBodies"></div>
+
+      <div class="card sub" id="caissonResult">
+        <h3>Caisson self-weight result</h3>
+        <div class="kv"><label>Concrete volume V<sub>caisson</sub> (m³)</label><output id="oVcaisson">-</output></div>
+        <div class="kv"><label>Caisson self-weight G2</label><output id="oGcaisson">-</output></div>
+        <div class="note" id="oCaissonNote">Run Buoyancy to calculate caisson self-weight.</div>
+      </div>
+    </section>
+
+    <!-- ============ RIGHT: RESULTS ============ -->
+    <section class="panel results">
+      <h2>Results</h2>
+      <div class="grid2">
+        <div class="card">
+          <h3>Operation / Static</h3>
+          <div class="kvgrid">
+            <label>Fo</label><output id="rFoN">-</output>
+            <label>Fs</label><output id="rFsN">-</output>
+            <label>p1</label><output id="rP1N">-</output>
+            <label>p2</label><output id="rP2N">-</output>
+            <label>Status</label><output id="rStatN" class="status">Ready</output>
+            <label>qa</label><output id="rQa">-</output>
+            <label>Ka</label><output id="rKa">-</output>
+            <label>PaH</label><output id="rPaH">-</output>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Seismic</h3>
+          <div class="kvgrid">
+            <label>Fo</label><output id="rFoS">-</output>
+            <label>Fs</label><output id="rFsS">-</output>
+            <label>p1</label><output id="rP1S">-</output>
+            <label>p2</label><output id="rP2S">-</output>
+            <label>Status</label><output id="rStatS" class="status">Ready</output>
+            <label>kh</label><output id="rKh">-</output>
+            <label>kv</label><output id="rKv">-</output>
+            <label>GM</label><output id="rGM">-</output>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Shared Buoyancy → Stability</h3>
+        <div class="kvgrid three">
+          <label>Draft</label><output id="bDraft">-</output>
+          <label>GM legacy</label><output id="bGM">-</output>
+          <label>Status</label><output id="bStat" class="status">No buoyancy data</output>
+          <label>G1 ballast</label><output id="bG1">-</output>
+          <label>G2 caisson</label><output id="bG2">-</output>
+          <span></span><button id="btnSync">Sync now</button>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card"><h3>Pressure envelopes</h3><div id="plotPressure" class="plot"></div></div>
+        <div class="card"><h3>Bearing pressure</h3><div id="plotBearing" class="plot"></div></div>
+      </div>
+
+      <div class="card">
+        <h3>Detailed summary</h3>
+        <pre id="summary">Ready.</pre>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+  <div id="lightbox" class="lightbox" title="Bấm để đóng (Esc)">
+    <figure><img id="lbImg" alt="" /><figcaption id="lbCap"></figcaption></figure>
+  </div>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
