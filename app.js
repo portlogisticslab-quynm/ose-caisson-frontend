@@ -130,7 +130,7 @@ function lockLinked(tf) {
 
 // ---------------- API ----------------
 async function api(path, body) {
-  const res = await fetch((window.API_BASE || "") + path, {
+  const res = await window.oseFetch(path, {
     method: body ? "POST" : "GET",
     headers: { "Content-Type": "application/json" },
     body: body ? JSON.stringify(body) : undefined,
@@ -374,4 +374,37 @@ function plotBearing(st) {
     DEFAULTS = d.inputs; LINKED = d.linkedFields;
     onReset();
   } catch (e) { toast("Cannot reach backend: " + e.message, "error"); }
+})();
+
+/* Server selector: Auto / Home / Render (config.js reads ?api=) */
+(async function initServerSelect() {
+  if (window.OSE_SAME_ORIGIN || ["localhost", "127.0.0.1"].includes(location.hostname)) return;
+  const box = document.createElement("div");
+  box.style.cssText = "position:fixed;right:10px;bottom:10px;z-index:9999;display:flex;gap:6px;align-items:center;font:12px system-ui,sans-serif;background:rgba(255,255,255,.92);color:#222;border:1px solid #ccc;border-radius:6px;padding:4px 6px;box-shadow:0 1px 4px rgba(0,0,0,.15);max-width:calc(100vw - 20px)";
+  const dot = document.createElement("span");
+  dot.style.cssText = "width:8px;height:8px;border-radius:50%;background:#aaa;flex:none";
+  const txt = document.createElement("span");
+  txt.textContent = "\u0110ang k\u1ebft n\u1ed1i\u2026";
+  const sel = document.createElement("select");
+  sel.style.cssText = "font:inherit;max-width:150px";
+  [["auto", "T\u1ef1 \u0111\u1ed9ng (Home \u2192 Render)"], ["home", "Home server"], ["render", "Render"]].forEach(([v, l]) => {
+    const o = document.createElement("option"); o.value = v; o.textContent = l; sel.appendChild(o);
+  });
+  let pinned = new URLSearchParams(location.search).get("api");
+  try { pinned = pinned || localStorage.getItem("ose_api"); } catch (e) {}
+  sel.value = ["home", "render"].includes(pinned) ? pinned : "auto";
+  sel.onchange = () => { const u = new URL(location.href); u.searchParams.set("api", sel.value); location.href = u.toString(); };
+  box.append(dot, txt, sel);
+  document.body.appendChild(box);
+  const t0 = performance.now();
+  try {
+    const r = await window.oseFetch("/api/health", { cache: "no-store" });
+    const h = await r.json();
+    const name = String(window.OSE_API_BASE || "").includes("onrender.com") ? "Render" : "Home server";
+    dot.style.background = "#2e9d4f";
+    txt.textContent = `${name} \u00b7 v${h.version || "?"} \u00b7 ${Math.round(performance.now() - t0)} ms`;
+  } catch (e) {
+    dot.style.background = "#d33";
+    txt.textContent = "M\u1ea5t k\u1ebft n\u1ed1i m\u00e1y ch\u1ee7";
+  }
 })();
