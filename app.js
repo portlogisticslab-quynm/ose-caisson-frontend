@@ -3,14 +3,14 @@
 
 const FORM = [
   { tab: "Caisson",
-    img: "img/caisson.png", caption: "Mặt đứng và mặt bằng thùng chìm: H, Td, Bd, Bt, Ct, L, Tt, Ts, Th, Tn, Cv",
+    img: "img/caisson.png", draw: "caisson", caption: "Mặt đứng và mặt bằng thùng chìm: H, Td, Bd, Bt, Ct, L, Tt, Ts, Th, Tn, Cv",
     fields: [
     ["L", "Length L (m)"], ["Bt", "Width Bt (m)"], ["Ct", "Toe width Ct (m)"], ["H", "Height H (m)"],
     ["Kn", "Y cells Kn"], ["Km", "X cells Km"], ["Td", "Slab thickness Td (m)"],
     ["Tt", "Front wall Tt (m)"], ["Ts", "Rear wall Ts (m)"], ["Th", "Side wall Th (m)"],
     ["Tn", "Partition wall Tn (m)"], ["Cv", "Chamfer Cv (m)"], ["bh", "Ballast/fill height bh (m)"] ] },
   { tab: "Section",
-    img: "img/section.png", caption: "Mặt cắt ngang tường bến: cao độ, mực nước, mũ bến, tải trọng",
+    img: "img/section.png", draw: "section", caption: "Mặt cắt ngang tường bến: cao độ, mực nước, mũ bến, tải trọng",
     fields: [
     ["Cr", "Crown level Cr"], ["hb", "Berth height hb"], ["Tf", "Foundation thickness Tf"],
     ["hc", "Coping height hc"], ["Tc", "Coping thickness Tc"], ["Tp", "Pavement thickness Tp"],
@@ -51,7 +51,22 @@ function buildForm() {
 
     const body = document.createElement("div");
     body.className = "tabbody";
-    if (t.img) {
+    if (t.draw) {
+      const fig = document.createElement("figure");
+      fig.className = "tabfig";
+      const box = document.createElement("div");
+      box.className = "drawbox"; box.dataset.draw = t.draw;
+      box.title = "Bấm để phóng to";
+      box.onclick = () => openLightboxSvg(box.innerHTML, t.caption);
+      const cap = document.createElement("figcaption");
+      cap.append(t.caption + " — vẽ theo số liệu nhập (bấm hình để phóng to) · ");
+      const ref = document.createElement("a");
+      ref.href = "#"; ref.textContent = "Hình mẫu";
+      ref.onclick = (ev) => { ev.preventDefault(); openLightbox(t.img, t.caption + " (hình mẫu)"); };
+      cap.appendChild(ref);
+      fig.append(box, cap);
+      body.appendChild(fig);
+    } else if (t.img) {
       const fig = document.createElement("figure");
       fig.className = "tabfig";
       const im = document.createElement("img");
@@ -88,10 +103,32 @@ function buildForm() {
 
 function openLightbox(src, caption) {
   const lb = $("lightbox");
+  $("lbSvg").innerHTML = ""; $("lbSvg").style.display = "none"; $("lbImg").style.display = "";
   $("lbImg").src = src; $("lbImg").alt = caption;
   $("lbCap").textContent = caption;
   lb.classList.add("show");
 }
+function openLightboxSvg(svg, caption) {
+  $("lbImg").style.display = "none"; $("lbImg").removeAttribute("src");
+  $("lbSvg").innerHTML = svg; $("lbSvg").style.display = "";
+  $("lbCap").textContent = caption;
+  $("lightbox").classList.add("show");
+}
+
+// Vẽ lại hình Caisson / Section theo số liệu đang nhập
+let _drawPending = 0;
+function redrawFigures() {
+  if (!window.CSDraw) return;
+  cancelAnimationFrame(_drawPending);
+  _drawPending = requestAnimationFrame(() => {
+    const inp = collectInputs();
+    document.querySelectorAll(".drawbox[data-draw]").forEach(box => {
+      try { box.innerHTML = window.CSDraw[box.dataset.draw](inp); }
+      catch (e) { box.textContent = "Không vẽ được hình: " + e.message; }
+    });
+  });
+}
+
 function closeLightbox() { $("lightbox").classList.remove("show"); }
 
 function activateTab(i) {
@@ -117,6 +154,7 @@ function writeInputs(inp) {
     if (el.type === "checkbox") el.checked = !!v;
     else el.value = v;
   });
+  redrawFigures();
 }
 
 function lockLinked(tf) {
@@ -361,6 +399,8 @@ function plotBearing(st) {
 // ---------------- Init ----------------
 (async function init() {
   buildForm();
+  $("tabBodies").addEventListener("input", redrawFigures);
+  redrawFigures();
   $("btnBuoy").onclick = onRunBuoyancy;
   $("btnStab").onclick = onRunStability;
   $("btnAll").onclick = onRunAll;

@@ -104,3 +104,13 @@ pre#summary {
 .toast.show { opacity: .95; }
 .toast.error { background: var(--badText); }
 .toast.success { background: var(--okText); }
+
+/* Hình vẽ tham số (drawings.js) */
+.drawbox {
+  width: 100%; max-width: 560px; margin: 0 auto; cursor: zoom-in;
+  border: 1px solid var(--border); border-radius: 6px; background: #fff; overflow: hidden;
+}
+.drawbox svg { display: block; width: 100%; height: auto; }
+.tabfig figcaption a { color: var(--accent); }
+.lbsvg { width: min(96vw, 1100px); max-height: 88vh; background: #fff; border-radius: 6px; overflow: auto; }
+.lbsvg svg { display: block; width: 100%; height: auto; max-height: 88vh; }
