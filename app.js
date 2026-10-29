@@ -33,7 +33,12 @@ const FORM = [
     ["useBuoyancyLink", "Use Buoyancy linked values", "check"], ["autoSync", "Auto sync after Buoyancy", "check"] ] },
 ];
 
-let DEFAULTS = {};
+// Số liệu demo cho tab Caisson và Section (ghi đè giá trị mặc định của backend)
+const DEMO = {
+  L: 30, Bt: 15, Ct: 2, H: 17, Kn: 4, Km: 3, Td: 1.0, Tt: 0.4, Ts: 0.4, Th: 0.35, Tn: 0.25, Cv: 0.3, bh: 8,
+  Cr: 6, hb: 14, Tf: 1.5, hc: 1.5, Tc: 2.5, Tp: 0.5, HWL: 3, MWL: 2, LWL: 1, RWL: 2.5, CDL: 0,
+};
+let DEFAULTS = { ...DEMO };
 let LINKED = ["bh", "Gc", "Gsd", "Gw"];
 const state = { inputs: {}, buoyancy: null, stability: null };
 
@@ -411,9 +416,9 @@ function plotBearing(st) {
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeLightbox(); });
   try {
     const d = await (await api("/api/defaults")).json();
-    DEFAULTS = d.inputs; LINKED = d.linkedFields;
+    DEFAULTS = { ...d.inputs, ...DEMO }; LINKED = d.linkedFields;
     onReset();
-  } catch (e) { toast("Cannot reach backend: " + e.message, "error"); }
+  } catch (e) { writeInputs(DEFAULTS); toast("Cannot reach backend: " + e.message, "error"); }
 })();
 
 /* Server selector: Auto / Home / Render (config.js reads ?api=) */

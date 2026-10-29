@@ -68,7 +68,7 @@
   // ---------- Caisson geometry ----------
   function caissonGeom(p) {
     const g = {
-      L: num(p.L, 30), Bt: num(p.Bt, 18), Ct: num(p.Ct, 0), H: num(p.H, 17),
+      L: num(p.L, 30), Bt: num(p.Bt, 15), Ct: num(p.Ct, 2), H: num(p.H, 17),
       Kn: Math.max(1, Math.round(num(p.Kn, 4))), Km: Math.max(1, Math.round(num(p.Km, 3))),
       Td: num(p.Td, 1), Tt: num(p.Tt, 0.4), Ts: num(p.Ts, 0.4), Th: num(p.Th, 0.35),
       Tn: num(p.Tn, 0.25), Cv: num(p.Cv, 0), bh: num(p.bh, 0),
@@ -168,7 +168,7 @@
   function drawSection(p) {
     const g = caissonGeom(p);
     const v = {
-      Cr: num(p.Cr, 6), hb: num(p.hb, 14), Tf: num(p.Tf, 1.5), hc: num(p.hc, 1.5), Tc: num(p.Tc, 1),
+      Cr: num(p.Cr, 6), hb: num(p.hb, 14), Tf: num(p.Tf, 1.5), hc: num(p.hc, 1.5), Tc: num(p.Tc, 2.5),
       Tp: num(p.Tp, 0.5), HWL: num(p.HWL, 3), MWL: num(p.MWL, 2), LWL: num(p.LWL, 1),
       RWL: num(p.RWL, 2.5), CDL: num(p.CDL, 0),
       b: num(p.b, NaN), e: num(p.e, NaN),
